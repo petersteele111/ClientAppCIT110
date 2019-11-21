@@ -4,6 +4,7 @@ using System.IO;
 
 namespace Assessment_ClientApp2
 {
+
     // **************************************************
     //
     // Assessment: Client App 2.0
@@ -12,6 +13,7 @@ namespace Assessment_ClientApp2
     // Level (Novice, Apprentice, or Master): 
     //
     // **************************************************    
+
     class Program
     {
         /// <summary>
@@ -31,11 +33,13 @@ namespace Assessment_ClientApp2
             //List<Monster> monsters = ReadFromDataFile();
 
             //
-            // call menu
+            // application flow
             //
+            DisplayWelcomeScreen();
             DisplayMenuScreen(monsters);
+            DisplayClosingScreen();
         }
-        
+
         #region UTILITY METHODS
 
         /// <summary>
@@ -97,14 +101,13 @@ namespace Assessment_ClientApp2
                 //
                 // get user menu choice
                 //
-                Console.WriteLine("a) List All Monsters");
-                Console.WriteLine("b) View Monster Detail");
-                Console.WriteLine("c) Add Monster");
-                Console.WriteLine("d) Delete Monster");
-                Console.WriteLine("e) Update Monster");
-                Console.WriteLine("f) Write to Data File");
-                Console.WriteLine("q) Quit");
-                Console.Write("Enter Choice:");
+                Console.WriteLine("\ta) List All Monsters");
+                Console.WriteLine("\tb) View Monster Detail");
+                Console.WriteLine("\tc) Add Monster");
+                Console.WriteLine("\td) Delete Monster");
+                Console.WriteLine("\te) Update Monster");
+                Console.WriteLine("\tq) Quit");
+                Console.Write("\t\tEnter Choice:");
                 menuChoice = Console.ReadLine().ToLower();
 
                 //
@@ -131,11 +134,7 @@ namespace Assessment_ClientApp2
                     case "e":
                         DisplayUpdateMonster(monsters);
                         break;
-
-                    case "f":
-                        DisplayWriteToDataFile(monsters);
-                        break;
-
+                        
                     case "q":
                         quitApplication = true;
                         break;
@@ -167,7 +166,7 @@ namespace Assessment_ClientApp2
 
             DisplayContinuePrompt();
         }
-        
+
         /// <summary>
         /// SCREEN: monster detail
         /// </summary>
@@ -242,8 +241,13 @@ namespace Assessment_ClientApp2
             //
             // echo new monster properties
             //
+            Console.WriteLine();
             Console.WriteLine("\tNew Monster's Properties");
+            Console.WriteLine("\t-------------");
             MonsterInfo(newMonster);
+            Console.WriteLine();
+            Console.WriteLine("\t-------------");
+
             DisplayContinuePrompt();
 
             monsters.Add(newMonster);
@@ -370,7 +374,9 @@ namespace Assessment_ClientApp2
             // update monster properties
             //
             string userResponse;
-            Console.WriteLine("\tReading to update. Press enter to keep the current info.");
+            Console.WriteLine();
+            Console.WriteLine("\tReady to update. Press the Enter to keep the current info.");
+            Console.WriteLine();
             Console.Write($"\tCurrent Name: {selectedMonster.Name} New Name: ");
             userResponse = Console.ReadLine();
             if (userResponse != "")
@@ -394,6 +400,16 @@ namespace Assessment_ClientApp2
                 selectedMonster.Attitude = attitude;
             }
 
+            //
+            // echo updated monster properties
+            //
+            Console.WriteLine();
+            Console.WriteLine("\tNew Monster's Properties");
+            Console.WriteLine("\t-------------");
+            MonsterInfo(selectedMonster);
+            Console.WriteLine();
+            Console.WriteLine("\t-------------");
+
             DisplayContinuePrompt();
         }
 
@@ -405,14 +421,27 @@ namespace Assessment_ClientApp2
         {
             DisplayScreenHeader("Write to Data File");
 
-            // prompt to warn user
-            DisplayContinuePrompt();
+            //
+            // prompt the user to continue
+            //
+            Console.WriteLine("\tThe application is ready to write to the data file.");
+            Console.Write("\tEnter 'y' to continue or 'n' to cancel.");
+            if (Console.ReadLine().ToLower() == "y")
+            {
+                DisplayContinuePrompt();
+                WriteToDataFile(monsters);
+                //
+                // TODO process I/O exceptions
+                //
 
-            WriteToDataFile(monsters);
-
-            // process I/O exceptions
-            Console.WriteLine();
-            Console.WriteLine("List written to data file.");
+                Console.WriteLine();
+                Console.WriteLine("\tList written to data the file.");
+            }
+            else
+            {
+                Console.WriteLine();
+                Console.WriteLine("\tList not written to the data file.");
+            }
 
             DisplayContinuePrompt();
         }
@@ -540,9 +569,11 @@ namespace Assessment_ClientApp2
         /// </summary>
         static void DisplayContinuePrompt()
         {
+            Console.CursorVisible = false;
             Console.WriteLine();
-            Console.WriteLine("\tPress any key to continue.");
+            Console.Write("\tPress any key to continue.");
             Console.ReadKey();
+            Console.CursorVisible = true;
         }
 
         /// <summary>

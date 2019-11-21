@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace Assessment_ClientApp2
 {
+    /// <summary>
+    /// monster entity class
+    /// </summary>
     public class Monster
     {
         public enum EmotionalState
@@ -45,7 +48,6 @@ namespace Assessment_ClientApp2
             set { _attitude = value; }
         }
 
-
         #endregion
 
         #region CONSTRUCTORS
@@ -63,8 +65,7 @@ namespace Assessment_ClientApp2
         }
 
         #endregion
-
-
+        
         #region METHODS
 
         public string Greeting()
@@ -98,6 +99,5 @@ namespace Assessment_ClientApp2
         }
 
         #endregion
-
     }
 }
