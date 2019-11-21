@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Monsters
+namespace Assessment_ClientApp2
 {
     public class Monster
     {
