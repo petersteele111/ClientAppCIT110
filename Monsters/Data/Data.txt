@@ -1,0 +1,3 @@
+﻿Sid,44,happy
+Lucy,33,sad
+Fred,99,bored
