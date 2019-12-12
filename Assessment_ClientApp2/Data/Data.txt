@@ -1,3 +1,5 @@
-﻿Sid,145,happy
-Lucy,125,bored
-Bill,934,sad
+﻿Sid,145,happy,Bloodhoof,false,1873/11/27
+Lucy,125,bored,Amani,true,1893/05/20
+Bill,934,sad,Gurubashi,true,1084/01/5
+LichKing,213,angry,Drakkari,true,1805/06/23
+MURRRLOCK,29,bored,Cloudsong,false,1990/08/14

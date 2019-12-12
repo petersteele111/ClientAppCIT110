@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace Assessment_ClientApp2
 {
@@ -8,9 +9,9 @@ namespace Assessment_ClientApp2
     // **************************************************
     //
     // Assessment: Client App 2.0
-    // Author: 
-    // Dated: 
-    // Level (Novice, Apprentice, or Master): 
+    // Author: Peter Steele
+    // Dated: 11/25/2019
+    // Level (Novice, Apprentice, or Master): Master 
     //
     // **************************************************    
 
@@ -23,14 +24,9 @@ namespace Assessment_ClientApp2
         static void Main(string[] args)
         {
             //
-            // initialize monster list from method
-            //
-            List<Monster> monsters = InitializeMonsterList();
-
-            //
             // read monsters from data file
             //
-            //List<Monster> monsters = ReadFromDataFile();
+            List<Monster> monsters = ReadFromDataFile();
 
             //
             // application flow
@@ -39,49 +35,6 @@ namespace Assessment_ClientApp2
             DisplayMenuScreen(monsters);
             DisplayClosingScreen();
         }
-
-        #region UTILITY METHODS
-
-        /// <summary>
-        /// initialize a list of monsters
-        /// </summary>
-        /// <returns>list of monsters</returns>
-        static List<Monster> InitializeMonsterList()
-        {
-            //
-            // create a list of monsters
-            // note: list and object initializers used
-            //
-            List<Monster> monsters = new List<Monster>()
-            {
-
-                new Monster()
-                {
-                    Name = "Sid",
-                    Age = 145,
-                    Attitude = Monster.EmotionalState.happy
-                },
-
-                new Monster()
-                {
-                    Name = "Lucy",
-                    Age = 125,
-                    Attitude = Monster.EmotionalState.bored
-                },
-
-                new Monster()
-                {
-                    Name = "Bill",
-                    Age = 934,
-                    Attitude = Monster.EmotionalState.sad
-                }
-
-            };
-
-            return monsters;
-        }
-
-        #endregion
 
         #region SCREEN DISPLAY METHODS
 
@@ -106,8 +59,10 @@ namespace Assessment_ClientApp2
                 Console.WriteLine("\tc) Add Monster");
                 Console.WriteLine("\td) Delete Monster");
                 Console.WriteLine("\te) Update Monster");
+                Console.WriteLine("\tf) Write Updates to File");
                 Console.WriteLine("\tq) Quit");
-                Console.Write("\t\tEnter Choice:");
+                Console.WriteLine();
+                Console.Write("\tEnter Choice:");
                 menuChoice = Console.ReadLine().ToLower();
 
                 //
@@ -134,7 +89,11 @@ namespace Assessment_ClientApp2
                     case "e":
                         DisplayUpdateMonster(monsters);
                         break;
-                        
+
+                    case "f":
+                        DisplayWriteToDataFile(monsters);
+                        break;
+
                     case "q":
                         quitApplication = true;
                         break;
@@ -155,8 +114,6 @@ namespace Assessment_ClientApp2
         static void DisplayAllMonsters(List<Monster> monsters)
         {
             DisplayScreenHeader("All Monsters");
-
-            Console.WriteLine("\t***************************");
             foreach (Monster monster in monsters)
             {
                 MonsterInfo(monster);
@@ -237,6 +194,15 @@ namespace Assessment_ClientApp2
             Console.Write("\tAttitude: ");
             Enum.TryParse(Console.ReadLine(), out Monster.EmotionalState attitude);
             newMonster.Attitude = attitude;
+            Console.Write("\tTribe: ");
+            Enum.TryParse(Console.ReadLine(), out Monster.Tribe tribe);
+            newMonster.TribalAffiliation = tribe;
+            Console.Write("\tActive Status: ");
+            bool.TryParse(Console.ReadLine(), out bool active); 
+            newMonster.Active = active;
+            Console.Write("\tDate of Birth (mm/dd/yyyy): ");
+            DateTime.TryParse(Console.ReadLine(), out DateTime dob);
+            newMonster.DOB = dob;
 
             //
             // echo new monster properties
@@ -399,6 +365,32 @@ namespace Assessment_ClientApp2
                 Enum.TryParse(userResponse, out Monster.EmotionalState attitude);
                 selectedMonster.Attitude = attitude;
             }
+            Console.WriteLine("\tTribal List");
+            foreach (var tribe in Enum.GetNames(typeof(Monster.Tribe)))
+            {
+                Console.WriteLine("\t" + tribe);
+            }
+            Console.Write($"\tCurrent Tribal Affiliation: {selectedMonster.TribalAffiliation} New Tribal Affilation: ");
+            userResponse = Console.ReadLine();
+            if (userResponse != "")
+            {
+                Enum.TryParse(userResponse, out Monster.Tribe tribe);
+                selectedMonster.TribalAffiliation = tribe;
+            }
+            Console.Write($"\tCurrent Active Status: {selectedMonster.Active} New Active Status: ");
+            userResponse = Console.ReadLine();
+            if (userResponse != "")
+            {
+                bool.TryParse(userResponse, out bool active);
+                selectedMonster.Active = active;
+            }
+            Console.Write($"\tCurrent Date of Birth: {selectedMonster.DOB} New Date of Birth (mm/dd/yyyy): ");
+            userResponse = Console.ReadLine();
+            if (userResponse != "")
+            {
+                DateTime.TryParse(userResponse, out DateTime dob);
+                selectedMonster.DOB = dob;
+            }
 
             //
             // echo updated monster properties
@@ -429,10 +421,19 @@ namespace Assessment_ClientApp2
             if (Console.ReadLine().ToLower() == "y")
             {
                 DisplayContinuePrompt();
-                WriteToDataFile(monsters);
+
                 //
                 // TODO process I/O exceptions
                 //
+                try 
+	            {	        
+		            WriteToDataFile(monsters);
+	            }
+	            catch (Exception error)
+	            {
+                    Console.WriteLine("Sorry something went wrong! ERROR:" + error);
+		            throw;
+	            }
 
                 Console.WriteLine();
                 Console.WriteLine("\tList written to data the file.");
@@ -466,7 +467,10 @@ namespace Assessment_ClientApp2
                 string monsterString =
                     monsters[index].Name + "," +
                     monsters[index].Age + "," +
-                    monsters[index].Attitude;
+                    monsters[index].Attitude + "," + 
+                    monsters[index].TribalAffiliation + "," + 
+                    monsters[index].Active + "," + 
+                    monsters[index].DOB;
 
                 monstersString[index] = monsterString;
             }
@@ -481,44 +485,26 @@ namespace Assessment_ClientApp2
         static List<Monster> ReadFromDataFile()
         {
             List<Monster> monsters = new List<Monster>();
-
-            //
-            // read all lines in the file
-            //
-            string[] monstersString = File.ReadAllLines("Data\\Data.txt");
-
-            //
-            // create monster objects and add to the list
-            //
-            foreach (string monsterString in monstersString)
+            IEnumerable<string[]> monstersFromFile = File.ReadAllLines("Data\\Data.txt").Select(a => a.Split(','));
+            foreach (string[] line in monstersFromFile)
             {
-                //
-                // get individual properties
-                //
-                string[] monsterProperties = monsterString.Split(',');
+                string name = line[0];
+                int.TryParse(line[1], out int age);
+                Enum.TryParse(line[2], out Monster.EmotionalState attitude);
+                Enum.TryParse(line[3], out Monster.Tribe tribe);
+                bool.TryParse(line[4], out bool active);
+                DateTime.TryParse(line[5], out DateTime dob);
 
-                //
-                // create monster
-                //
-                Monster newMonster = new Monster();
-
-                //
-                // update monster property values
-                //
-                newMonster.Name = monsterProperties[0];
-
-                int.TryParse(monsterProperties[1], out int age);
-                newMonster.Age = age;
-
-                Enum.TryParse(monsterProperties[2], out Monster.EmotionalState attitude);
-                newMonster.Attitude = attitude;
-
-                //
-                // add new monster to list
-                //
+                Monster newMonster = new Monster()
+                {
+                    Name = name,
+                    Age = age,
+                    Attitude = attitude,
+                    TribalAffiliation = tribe,
+                    DOB = dob
+                };
                 monsters.Add(newMonster);
             }
-
             return monsters;
         }
 
@@ -536,6 +522,9 @@ namespace Assessment_ClientApp2
             Console.WriteLine($"\tAge: {monster.Age}");
             Console.WriteLine($"\tAttitude: {monster.Attitude}");
             Console.WriteLine("\t" + monster.Greeting());
+            Console.WriteLine($"\tTribe: {monster.TribalAffiliation}");
+            Console.WriteLine($"\tActive: {monster.Active}");
+            Console.WriteLine($"\tDate of Birth: {monster.DOB.ToString("d")}");
         }
 
         /// <summary>
@@ -582,9 +571,19 @@ namespace Assessment_ClientApp2
         static void DisplayScreenHeader(string headerText)
         {
             Console.Clear();
-            Console.WriteLine();
-            Console.WriteLine("\t\t" + headerText);
-            Console.WriteLine();
+            Console.ForegroundColor = ConsoleColor.Green;
+            for (int i = 0; i < Console.BufferWidth; i++)
+            {
+                Console.Write("-");
+            }
+            Console.SetCursorPosition((Console.BufferWidth / 2) - (headerText.Length / 2), 1); // Centers the text to the console window for the header
+            Console.WriteLine(headerText);
+            for (int i = 0; i < Console.BufferWidth; i++)
+            {
+                Console.Write("-");
+            }
+            Console.SetCursorPosition(0, 5);
+            Console.ForegroundColor = ConsoleColor.White;
         }
 
         #endregion

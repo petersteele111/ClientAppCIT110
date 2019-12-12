@@ -20,33 +20,29 @@ namespace Assessment_ClientApp2
             bored
         }
 
-        #region FIELDS
-
-        private string _name;
-        private int _age;
-        private EmotionalState _attitude;
-
-        #endregion
+        public enum Tribe
+        {
+            none,
+            Bloodhoof,
+            Cliffwalker,
+            Cloudsong,
+            Darkmane,
+            Gurubashi,
+            Amani,
+            Drakkari
+        }
 
         #region PROPERTIES
 
-        public string Name
-        {
-            get { return _name; }
-            set { _name = value; }
-        }
+        public string Name { get; set; }
 
-        public int Age
-        {
-            get { return _age; }
-            set { _age = value; }
-        }
+        public int Age { get; set; }
 
-        public EmotionalState Attitude
-        {
-            get { return _attitude; }
-            set { _attitude = value; }
-        }
+        public EmotionalState Attitude { get; set; }
+
+        public Tribe TribalAffiliation { get; set; }
+        public bool Active { get; set; }
+        public DateTime DOB { get; set; }
 
         #endregion
 
@@ -57,11 +53,14 @@ namespace Assessment_ClientApp2
 
         }
 
-        public Monster(string name, int age, EmotionalState attitude)
+        public Monster(string name, int age, EmotionalState attitude, Tribe tribe, bool active, DateTime dob)
         {
-            _name = name;
-            _age = age;
-            _attitude = attitude;
+            Name = name;
+            Age = age;
+            Attitude = attitude;
+            TribalAffiliation = tribe;
+            Active = active;
+            DOB = dob;
         }
 
         #endregion
@@ -72,26 +71,26 @@ namespace Assessment_ClientApp2
         {
             string greeting;
 
-            switch (_attitude)
+            switch (Attitude)
             {
                 case EmotionalState.happy:
-                    greeting = $"Hello, my name is {_name} and I am having a great day!";
+                    greeting = $"Hello, my name is {Name} and I am having a great day!";
                     break;
 
                 case EmotionalState.sad:
-                    greeting = $"{_name} is feeling bad.";
+                    greeting = $"{Name} is feeling bad.";
                     break;
 
                 case EmotionalState.angry:
-                    greeting = $"I'm {_name}, and stay away from me!";
+                    greeting = $"I'm {Name}, and stay away from me!";
                     break;
 
                 case EmotionalState.bored:
-                    greeting = $"I don't know what to do at {_age} years old.";
+                    greeting = $"I don't know what to do at {Age} years old.";
                     break;
 
                 default:
-                    greeting = $"Hello, my name is {_name}.";
+                    greeting = $"Hello, my name is {Name}.";
                     break;
             }
                        
